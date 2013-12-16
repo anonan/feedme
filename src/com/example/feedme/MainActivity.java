@@ -73,7 +73,7 @@ public class MainActivity extends ListActivity {
 	    @Override
 	    protected String doInBackground(String... urls) {
 	    	try {
-			    URL url = new URL("http://droidsans.com/rss.xml");
+			    URL url = new URL("http://www.bbc.co.uk/blogs/food/rss.xml");
 			 
 			    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 			    factory.setNamespaceAware(false);
@@ -97,7 +97,8 @@ public class MainActivity extends ListActivity {
 			    while (eventType != XmlPullParser.END_DOCUMENT) {
 			        if (eventType == XmlPullParser.START_TAG) {
 			 
-			            if (xpp.getName().equalsIgnoreCase("item")) {
+			            if (xpp.getName().equalsIgnoreCase("item")||
+			            		xpp.getName().equalsIgnoreCase("entry")) {
 			                insideItem = true;
 			            } else if (xpp.getName().equalsIgnoreCase("title")) {
 			                if (insideItem)
@@ -106,11 +107,13 @@ public class MainActivity extends ListActivity {
 			                if (insideItem)
 			                    links.add(xpp.nextText()); //extract the link of article
 			            }
-			            else if(xpp.getName().equalsIgnoreCase("description")){
+			            else if(xpp.getName().equalsIgnoreCase("description")||
+			            		xpp.getName().equalsIgnoreCase("content")){
 			            	 if (insideItem)
 			            	imageURL.add(renderHtml(xpp.nextText()));
 			            }
-			        }else if(eventType==XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")){
+			        }else if(eventType==XmlPullParser.END_TAG && (xpp.getName().equalsIgnoreCase("item")||
+			        		xpp.getName().equalsIgnoreCase("entry"))){
 			            insideItem=false;
 			        }
 			 
