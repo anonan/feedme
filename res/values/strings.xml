@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">feedme</string>
+    <string name="app_name">Update66</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+	<string-array name="rivers">
+        <item >Politics</item>
+        <item >Sports</item>
+        <item >Entertainment</item>
+        <item >IT</item>
+     	<item >Crime</item>
+    </string-array>
 </resources>
