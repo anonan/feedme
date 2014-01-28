@@ -1,7 +1,9 @@
 package com.example.feedme;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ public class MainActivity extends Activity {
 	ArrayList<String> headlines;
 	ArrayList<String> links;
 	ArrayList<String> imageURL;
+	ArrayList<String> descriptions;
 	Activity mActivity;
 	ListView listNews;
 	ListView mDrawerList;
@@ -60,6 +63,7 @@ public class MainActivity extends Activity {
 		headlines = new ArrayList<String>();
 		links = new ArrayList<String>();
 		imageURL = new ArrayList<String>();
+		descriptions = new ArrayList<String>();
 		mActivity = this;
 		listNews = (ListView) findViewById(R.id.listnews);
 
@@ -111,7 +115,7 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 				DownloadRssTask d = new DownloadRssTask();
-				d.execute(String.valueOf(position + 2));
+				d.execute(String.valueOf(position + 1));
 				// Closing the drawer
 				mDrawerLayout.closeDrawer(mDrawerList);
 			}
@@ -135,11 +139,11 @@ public class MainActivity extends Activity {
 			try {
 				String feedCat;
 				if (feed == null || feed.length == 0)
-					feedCat = "2";
+					feedCat = "1";
 				else
 					feedCat = feed[0];
 				URL url = new URL("http://www.update66.com/rss/" + feedCat + ".xml");
-				Log.v("T", url.toString());
+
 				XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 				factory.setNamespaceAware(false);
 				XmlPullParser xpp = factory.newPullParser();
@@ -164,35 +168,46 @@ public class MainActivity extends Activity {
 				headlines.clear();
 				links.clear();
 				imageURL.clear();
+				descriptions.clear();
+				extractDatafrommHTML(convertStreamToString(getInputStream(url)));
+
 				// Returns the type of current event: START_TAG, END_TAG, etc..
-				int eventType = xpp.getEventType();
-				while (eventType != XmlPullParser.END_DOCUMENT) {
-					if (eventType == XmlPullParser.START_TAG) {
-
-						if (xpp.getName().equalsIgnoreCase("item")) {
-							insideItem = true;
-						} else if (xpp.getName().equalsIgnoreCase("title")) {
-							if (insideItem) {
-								// Extract img url from title
-								headlines.add(removeTagfromTitle(xpp.nextText())); // extract
-																					// the
-																					// headline
-							}
-
-						} else if (xpp.getName().equalsIgnoreCase("link")) {
-							if (insideItem)
-								links.add(xpp.nextText()); // extract the link
-															// of article
-						} else if (xpp.getName().equalsIgnoreCase("description")) {
-							if (insideItem)
-								imageURL.add(renderHtml(xpp.nextText()));
-						}
-					} else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
-						insideItem = false;
-					}
-
-					eventType = xpp.next(); // move to next element
-				}
+				// int eventType = xpp.getEventType();
+				// while (eventType != XmlPullParser.END_DOCUMENT) {
+				// if (eventType == XmlPullParser.START_TAG) {
+				//
+				// if (xpp.getName().equalsIgnoreCase("item")) {
+				// insideItem = true;
+				// } else if (xpp.getName().equalsIgnoreCase("title")) {
+				// if (insideItem) {
+				// // Extract img url from title
+				// headlines.add((xpp.nextText())); // extract
+				// // the
+				// // headline
+				// }
+				//
+				// } else if (xpp.getName().equalsIgnoreCase("link")) {
+				// if (insideItem)
+				// links.add(xpp.nextText()); // extract the link
+				// // of article
+				// } else if (xpp.getName().equalsIgnoreCase("description")) {
+				// Log.v("DES",xpp.);
+				//
+				// String des = removeTagfromTitle(xpp.nextText());
+				// Log.v("DESS",des);
+				// descriptions.add(des);
+				// if (insideItem){
+				// imageURL.add(renderHtml(des));
+				// }
+				//
+				// }
+				// } else if (eventType == XmlPullParser.END_TAG &&
+				// xpp.getName().equalsIgnoreCase("item")) {
+				// insideItem = false;
+				// }
+				//
+				// eventType = xpp.next(); // move to next element
+				// }
 
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -208,19 +223,92 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result) {
 			// Binding data
-			String[] hlArr = headlines.toArray(new String[headlines.size()]);
+			final String[] hlArr = headlines.toArray(new String[headlines.size()]);
 
-			String[] imgUrlArr = imageURL.toArray(new String[imageURL.size()]);
-			Log.v("HL", "HEADLINE LENGTH:" + hlArr.length);
+			final String[] imgUrlArr = imageURL.toArray(new String[imageURL.size()]);
+			final String[] desArr = descriptions.toArray(new String[descriptions.size()]);
+			final String[] linkArr = links.toArray(new String[links.size()]);
+
 			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr);
 			listNews.setAdapter(null);
 			listNews.setAdapter(adapter);
+			listNews.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> root, View view, int position, long id) {
+					Intent k = new Intent(mActivity, NewsDetailActivity.class);
+					k.putExtra("headline", hlArr[position]);
+					k.putExtra("image", imgUrlArr[position]);
+					k.putExtra("description", desArr[position]);
+					// k.putExtra("link", linkArr[position]);
+					mActivity.startActivity(k);
+				}
+			});
 		}
 	}
 
 	private String removeTagfromTitle(String body) {
 
 		return body.replaceAll("\\<(/?[^\\>]+)\\>", "");
+
+	}
+
+	private String convertStreamToString(InputStream is) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return sb.toString();
+	}
+	private void extractDatafrommHTML(String body) {
+		Pattern pattern = Pattern.compile("<title>(.*)</title>");
+		Matcher matcher = pattern.matcher(body);
+		
+		int i = 0;
+		
+		while (matcher.find()) {
+			if (i == 0) {
+				i++;
+				continue;
+			}
+			
+			headlines.add(matcher.group(1));
+			i++;
+		}
+
+		pattern = Pattern.compile("<description>(.*)</description>");
+
+		matcher = pattern.matcher(body);
+		i = 0;
+		while (matcher.find()) {
+			if (i == 0) {
+				i++;
+				continue;
+			}
+			descriptions.add((matcher.group(1)));
+			i++;
+		}
+		pattern = Pattern.compile("<image>http(.*)jpg</image>");
+		matcher = pattern.matcher(body);
+		i = 0;
+		while (matcher.find()) {
+
+			imageURL.add("http" + removeTagfromTitle(matcher.group(1)) + "jpg");
+			i++;
+		}
 
 	}
 

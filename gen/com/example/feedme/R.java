@@ -27,35 +27,35 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int RelativeLayout1=0x7f090005;
-        public static final int action_settings=0x7f09000c;
-        public static final int activity_main=0x7f090009;
+        public static final int RelativeLayout1=0x7f090009;
+        public static final int TextViewDescription=0x7f090007;
+        public static final int TextViewSubject=0x7f090005;
+        public static final int action_settings=0x7f09000b;
         public static final int content_frame=0x7f090001;
         public static final int drawer_layout=0x7f090000;
         public static final int drawer_list=0x7f090003;
         public static final int imageView1=0x7f090006;
-        public static final int list_feed=0x7f090008;
         public static final int listnews=0x7f090002;
-        public static final int slidedout_cover=0x7f09000b;
-        public static final int slideout_placeholder=0x7f09000a;
-        public static final int textView1=0x7f090007;
-        public static final int tv_content=0x7f090004;
+        public static final int scrollView1=0x7f090004;
+        public static final int textView1=0x7f09000a;
+        public static final int tv_content=0x7f090008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int drawer_list_item=0x7f030001;
-        public static final int fragment_layout=0x7f030002;
-        public static final int list_feed=0x7f030003;
-        public static final int mainframe=0x7f030004;
-        public static final int slideout=0x7f030005;
+        public static final int activity_news_detail=0x7f030001;
+        public static final int drawer_list_item=0x7f030002;
+        public static final int fragment_layout=0x7f030003;
+        public static final int list_feed=0x7f030004;
     }
     public static final class menu {
         public static final int main=0x7f080000;
+        public static final int news_detail=0x7f080001;
     }
     public static final class string {
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
         public static final int hello_world=0x7f050002;
+        public static final int title_activity_news_detail=0x7f050003;
     }
     public static final class style {
         /** 
