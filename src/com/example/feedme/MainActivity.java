@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 		mDrawerList = (ListView) findViewById(R.id.drawer_list);
 
 		// Getting reference to the ActionBarDrawerToggle
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_launcher, R.string.app_name,
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_menu, R.string.app_name,
 				R.string.app_name) {
 
 			/** Called when drawer is closed */
