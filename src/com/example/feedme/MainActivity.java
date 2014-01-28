@@ -73,8 +73,8 @@ public class MainActivity extends ListActivity {
 	    @Override
 	    protected String doInBackground(String... urls) {
 	    	try {
-			    URL url = new URL("http://www.bbc.co.uk/blogs/food/rss.xml");
-			 
+			    //URL url = new URL("http://www.bbc.co.uk/blogs/food/rss.xml");
+			    URL url = new URL("http://www.update66.com/rss/1.xml");
 			    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 			    factory.setNamespaceAware(false);
 			    XmlPullParser xpp = factory.newPullParser();
