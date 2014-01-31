@@ -5,16 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/white" >
 
-    <ListView
-        android:id="@+id/drawer_list"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#111"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" />
-
+   
     <LinearLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
@@ -33,42 +24,16 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="@color/graylight"
-            android:orientation="horizontal"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp" >
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="#00FFFFFF"
-                android:src="@drawable/list_fullimg" />
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="#00FFFFFF"
-                android:src="@drawable/list_imgonly" />
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="#00FFFFFF"
-                android:src="@drawable/list_imgtext" />
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="#00FFFFFF"
-                android:src="@drawable/list_textonly" />
-        </LinearLayout>
     </LinearLayout>
 
+ <ListView
+     android:id="@+id/drawer_list"
+     android:layout_width="240dp"
+     android:layout_height="match_parent"
+     android:layout_gravity="start"
+     android:background="@android:color/white"
+     android:choiceMode="singleChoice"
+     android:divider="@android:color/holo_blue_bright"
+     android:dividerHeight="1dp" />
+    
 </android.support.v4.widget.DrawerLayout>

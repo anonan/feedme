@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 public class ImageLoader {
 
@@ -40,13 +41,14 @@ public class ImageLoader {
 	final int stub_id = R.drawable.ic_launcher;
 	public void DisplayImage(String url, ImageView imageView) {
 		
-		if (url == null||url.equals("http://www.roomai.com:8080/assets/profile_pics/default.png")) {
+		if (url == null) {
 			imageView.setImageResource(R.drawable.ic_launcher);
 			return;
 		}
 		imageViews.put(imageView, url);
 		Bitmap bitmap = memoryCache.get(url);
 		imageView.setAdjustViewBounds(true);
+
 		if (bitmap != null)
 			imageView.setImageBitmap(bitmap);
 			
@@ -59,7 +61,7 @@ public class ImageLoader {
 	
 	public void DisplayImageNoCache(String url, ImageView imageView) {
 		
-		if (url == null||url.equals("http://www.roomai.com:8080/assets/profile_pics/default.png")) {
+		if (url == null) {
 			imageView.setImageResource(R.drawable.ic_launcher);
 			return;
 		}
@@ -127,12 +129,7 @@ public class ImageLoader {
 		// from web
 		try {
 			
-			if(url.equals("http://hot-now.com/uploads/profile/11.jpg")){
-				Log.v("IMAGE","LOADINGGGGGGGGGGGGGGGGG IMAGEEEEEEEEEEEEEEEEEEEEE");
-			}
-			else{
-				Log.v("IMAGE","LOAD"+url);
-			}
+			
 			
 			Bitmap bitmap = null;
 			URL imageUrl = new URL(url);
@@ -163,7 +160,7 @@ public class ImageLoader {
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
+			//o.inJustDecodeBounds = true;
 			
 			FileInputStream fileInput = new FileInputStream(f);
 			BitmapFactory.decodeStream(fileInput, null, o);
@@ -174,7 +171,7 @@ public class ImageLoader {
 				e.printStackTrace();
 			}
 			// Find the correct scale value. It should be the power of 2.
-			final int REQUIRED_SIZE = 280;
+			final int REQUIRED_SIZE = 500;
 			int width_tmp = o.outWidth, height_tmp = o.outHeight;
 			int scale = 1;
 			while (true) {
@@ -187,6 +184,7 @@ public class ImageLoader {
 
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
+		//	scale = 0;
 			o2.inSampleSize = scale;
 			
 			FileInputStream returnFileInput = new FileInputStream(f);

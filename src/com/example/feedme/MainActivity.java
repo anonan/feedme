@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
 	ArrayList<String> links;
 	ArrayList<String> imageURL;
 	ArrayList<String> descriptions;
+	ArrayList<String> pubDate;
 	Activity mActivity;
 	ListView listNews;
 	ListView mDrawerList;
@@ -64,6 +66,7 @@ public class MainActivity extends Activity {
 		links = new ArrayList<String>();
 		imageURL = new ArrayList<String>();
 		descriptions = new ArrayList<String>();
+		pubDate =new ArrayList<String>();
 		mActivity = this;
 		listNews = (ListView) findViewById(R.id.listnews);
 
@@ -103,24 +106,30 @@ public class MainActivity extends Activity {
 
 		// Setting the adapter on mDrawerList
 		mDrawerList.setAdapter(adapter1);
-		// Enabling Home button
-		getActionBar().setHomeButtonEnabled(true);
-
-		// Enabling Up navigation
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Setting item click listener for the listview mDrawerList
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-				DownloadRssTask d = new DownloadRssTask();
-				d.execute(String.valueOf(position + 1));
+				if(position<7){
+					DownloadRssTask d = new DownloadRssTask();
+					d.execute(String.valueOf(position + 1));
+				}
+				else{
+					Intent k = new Intent(mActivity,AboutUsActivity.class);
+					startActivity(k);
+				}
+				
 				// Closing the drawer
 				mDrawerLayout.closeDrawer(mDrawerList);
 			}
 		});
 
+		// Enabling Home button
+		getActionBar().setHomeButtonEnabled(true);
+
+		// Enabling Up navigation
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		DownloadRssTask d = new DownloadRssTask();
 		d.execute();
 	}
@@ -164,50 +173,15 @@ public class MainActivity extends Activity {
 				 * In order to achieve this, we will make use of a boolean
 				 * variable.
 				 */
-				boolean insideItem = false;
+
 				headlines.clear();
 				links.clear();
 				imageURL.clear();
 				descriptions.clear();
-				extractDatafrommHTML(convertStreamToString(getInputStream(url)));
-
-				// Returns the type of current event: START_TAG, END_TAG, etc..
-				// int eventType = xpp.getEventType();
-				// while (eventType != XmlPullParser.END_DOCUMENT) {
-				// if (eventType == XmlPullParser.START_TAG) {
-				//
-				// if (xpp.getName().equalsIgnoreCase("item")) {
-				// insideItem = true;
-				// } else if (xpp.getName().equalsIgnoreCase("title")) {
-				// if (insideItem) {
-				// // Extract img url from title
-				// headlines.add((xpp.nextText())); // extract
-				// // the
-				// // headline
-				// }
-				//
-				// } else if (xpp.getName().equalsIgnoreCase("link")) {
-				// if (insideItem)
-				// links.add(xpp.nextText()); // extract the link
-				// // of article
-				// } else if (xpp.getName().equalsIgnoreCase("description")) {
-				// Log.v("DES",xpp.);
-				//
-				// String des = removeTagfromTitle(xpp.nextText());
-				// Log.v("DESS",des);
-				// descriptions.add(des);
-				// if (insideItem){
-				// imageURL.add(renderHtml(des));
-				// }
-				//
-				// }
-				// } else if (eventType == XmlPullParser.END_TAG &&
-				// xpp.getName().equalsIgnoreCase("item")) {
-				// insideItem = false;
-				// }
-				//
-				// eventType = xpp.next(); // move to next element
-				// }
+				pubDate.clear();
+				//extractDatafrommHTML(convertStreamToString(getInputStream(url)));
+				extract2(convertStreamToString(getInputStream(url)));
+				
 
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -228,8 +202,8 @@ public class MainActivity extends Activity {
 			final String[] imgUrlArr = imageURL.toArray(new String[imageURL.size()]);
 			final String[] desArr = descriptions.toArray(new String[descriptions.size()]);
 			final String[] linkArr = links.toArray(new String[links.size()]);
-
-			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr);
+			final String[] pubDataArr = pubDate.toArray(new String[pubDate.size()]);
+			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr,pubDataArr);
 			listNews.setAdapter(null);
 			listNews.setAdapter(adapter);
 			listNews.setOnItemClickListener(new OnItemClickListener() {
@@ -240,7 +214,7 @@ public class MainActivity extends Activity {
 					k.putExtra("headline", hlArr[position]);
 					k.putExtra("image", imgUrlArr[position]);
 					k.putExtra("description", desArr[position]);
-					// k.putExtra("link", linkArr[position]);
+					k.putExtra("link", linkArr[position]);
 					mActivity.startActivity(k);
 				}
 			});
@@ -273,58 +247,77 @@ public class MainActivity extends Activity {
 		}
 		return sb.toString();
 	}
-	private void extractDatafrommHTML(String body) {
-		Pattern pattern = Pattern.compile("<title>(.*)</title>");
-		Matcher matcher = pattern.matcher(body);
-		
-		int i = 0;
-		
-		while (matcher.find()) {
-			if (i == 0) {
-				i++;
-				continue;
-			}
-			
-			headlines.add(matcher.group(1));
-			i++;
+	
+	private String extractfromPattern(String body,String pattern){
+		Pattern pat = Pattern.compile(pattern, Pattern.DOTALL);
+		Matcher matcher = pat.matcher(body);
+		if(matcher.find()) {
+			return matcher.group(1);
 		}
-
-		pattern = Pattern.compile("<description>(.*)</description>");
-
-		matcher = pattern.matcher(body);
-		i = 0;
-		while (matcher.find()) {
-			if (i == 0) {
-				i++;
-				continue;
-			}
-			descriptions.add((matcher.group(1)));
-			i++;
-		}
-		pattern = Pattern.compile("<image>http(.*)jpg</image>");
-		matcher = pattern.matcher(body);
-		i = 0;
-		while (matcher.find()) {
-
-			imageURL.add("http" + removeTagfromTitle(matcher.group(1)) + "jpg");
-			i++;
-		}
-
+		else return null;
 	}
-
-	public String renderHtml(String body) {
-		Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
+	
+	private void extract2(String body){
+		
+		Pattern pattern = Pattern.compile("<item>(.*?)</item>",Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(body);
-		StringBuilder builder = new StringBuilder();
-		int i = 0;
-		String imgURL = "";
+		
 		while (matcher.find()) {
-
-			imgURL = matcher.group(1); // Access a submatch group; String can't
-										// do this.
+			
+			String content = matcher.group(1);
+			
+			String h  = extractfromPattern(content,"<title>(.*?)</title>");
+			String d  = extractfromPattern(content,"<description>(.*?)</description>");
+			String i  = extractfromPattern(content,"<image>(.*?)</image>");
+			String l  = extractfromPattern(content,"<link>(.*?)</link>");
+			String p  = extractfromPattern(content,"<pubDate>(.*?)</pubDate>");
+			
+			if(i!=null&&h!=null&&d!=null&&l!=null&&p!=null){
+				headlines.add(h);
+				descriptions.add(removeDirtyBracket(removeImageTag(d)));
+				links.add(l);
+				pubDate.add(p);
+				//approve this image valid or not
+				URL u;
+				int code;
+				try {
+					u = new URL ( i);
+					HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
+					huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
+					huc.connect () ; 
+					code = huc.getResponseCode() ;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					code = 404;
+				}
+				
+				if(code==404)i="";
+				imageURL.add(i);
+			}
 		}
-		Log.v("HL", "Load image:" + imgURL);
-		return imgURL;
+	}
+	
+	
+	private String removeDirtyBracket(String body){
+		return body.replaceAll("]]>", "");
+	}
+	
+	private String removeImageTag(String body) {
+		
+		return body.replaceAll("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>", "");
+//		Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
+//		Matcher matcher = pattern.matcher(body);
+//		StringBuilder builder = new StringBuilder();
+//		int i = 0;
+//		String imgURL = "";
+//		while (matcher.find()) {
+//
+//			imgURL = matcher.group(1); // Access a submatch group; String can't
+//										// do this.
+//		}
+//		
+//		return imgURL;
 
 	}
 

@@ -6,15 +6,17 @@
     <string name="hello_world">Hello world!</string>
 
     <string-array name="rivers">
-        <item>Politics</item>
-        <item>Business</item>
-        <item>Around the world</item>
-        <item>Sport</item>
-        <item>Technology</item>
-        <item>Entertainment</item>
-        <item>Health</item>
+        <item>การเมือง</item>
+        <item>เศรษฐกิจ</item>
+        <item>ต่างประเทศ</item>
+        <item>กีฬา</item>
+        <item>ไอที</item>
+        <item>บันเทิง</item>
+        <item>สุขภาพ</item>
+          <item>เกี่ยวกับเรา</item>
     </string-array>
 
     <string name="title_activity_news_detail">Update66</string>
+    <string name="title_activity_about_us">AboutUsActivity</string>
 
 </resources>
