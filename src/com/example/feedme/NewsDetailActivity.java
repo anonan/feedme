@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +22,10 @@ public class NewsDetailActivity extends Activity {
 		((TextView)findViewById(R.id.TextViewDescription)).setText(Html.fromHtml(k.getStringExtra("description")));
 		ImageLoader mImageLoader;
 		mImageLoader = new ImageLoader(this);
-		mImageLoader.DisplayImage(k.getStringExtra("image"),(ImageView)findViewById(R.id.imageView1));
+		if(k.getStringExtra("image").equals(""))
+			((ImageView)findViewById(R.id.imageView1)).setVisibility(View.GONE);
+		else
+			mImageLoader.DisplayImage(k.getStringExtra("image"),(ImageView)findViewById(R.id.imageView1));
 		ActionBar acb = getActionBar();
 		acb.setHomeButtonEnabled(true);
 		acb.setDisplayHomeAsUpEnabled(true);
