@@ -30,9 +30,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -57,7 +60,9 @@ public class MainActivity extends Activity {
 	GridView gridView;
 	ListView mDrawerList;
 	DrawerLayout mDrawerLayout;
+	Menu menu;
 	String mTitle;
+	SharedPreferences prefs;
 	// ActionBarDrawerToggle indicates the presence of Navigation Drawer in the
 	// action bar
 	ActionBarDrawerToggle mDrawerToggle;
@@ -71,6 +76,10 @@ public class MainActivity extends Activity {
 		mMode = 0;
 		mCategory = 0;
 		mTitle = "";
+		
+		
+		prefs = this.getSharedPreferences("com.example.feedme", Context.MODE_PRIVATE);
+		mMode = prefs.getInt("mode", FeedsAdapter.TYPE_NORMAL);
 		// Initializing instance variables
 		headlines = new ArrayList<String>();
 		links = new ArrayList<String>();
@@ -218,6 +227,8 @@ public class MainActivity extends Activity {
 			final String[] desArr = descriptions.toArray(new String[descriptions.size()]);
 			final String[] linkArr = links.toArray(new String[links.size()]);
 			final String[] pubDataArr = pubDate.toArray(new String[pubDate.size()]);
+			
+		
 			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr,pubDataArr);
 			adapter.setType(mMode);
 			
@@ -386,30 +397,34 @@ public class MainActivity extends Activity {
 		
 		if(item.getItemId()==R.id.action_show_mini){
 			mMode = FeedsAdapter.TYPE_MINI;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgtext));
 			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
 		}
 		else if(item.getItemId()==R.id.action_show_normal){
 			mMode = FeedsAdapter.TYPE_NORMAL;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_fullimg));
 			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
 		}
 		else if(item.getItemId()==R.id.action_show_text){
 			mMode = FeedsAdapter.TYPE_TEXTONLY;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_textonly));
 			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
 		}
 		else if(item.getItemId()==R.id.action_show_grid){
 			mMode = FeedsAdapter.TYPE_IMGONLY;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgonly2));
 			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
 		}
 		
-		
+		prefs.edit().putInt("mode", mMode).commit();
 		 
 		
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -435,6 +450,20 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		
+		if(mMode ==FeedsAdapter.TYPE_NORMAL){
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_fullimg));
+		}
+		else if(mMode ==FeedsAdapter.TYPE_MINI){
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgtext));
+		}
+		else if(mMode ==FeedsAdapter.TYPE_TEXTONLY){
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_textonly));
+		}
+		else{
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgonly2));
+		}
+		this.menu = menu;
 		return true;
 	}
 }

@@ -27,7 +27,7 @@
       <item
         android:id="@+id/action_show_grid"
          android:icon="@drawable/list_imgonly2"
-        android:title="@string/show_text_only"/>
+        android:title="@string/show_grid"/>
     </menu>
     </item>
 

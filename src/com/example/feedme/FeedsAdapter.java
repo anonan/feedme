@@ -44,9 +44,11 @@ public class FeedsAdapter extends BaseAdapter {
 	public static final int TYPE_MINI = 1;
 	public static final int TYPE_TEXTONLY = 2;
 	public static final int TYPE_IMGONLY = 3;
+	int screenWidth;
+	int screenHeight;
 	ImageLoader mImageLoader;
 	boolean mShowName;
-	int screenWidth,screenHeight;
+	
 	Activity mA;
 	public FeedsAdapter(Activity a, String[] headLines,String[] images,String[] pubDate) {
 		mA = a;
@@ -137,21 +139,24 @@ public class FeedsAdapter extends BaseAdapter {
 					
 					
 					ViewGroup.LayoutParams layoutParams = imgNews.getLayoutParams();
-					layoutParams.height =400; //this is in pixels
-					layoutParams.width = 200;
+					layoutParams.height =screenWidth>>1; //this is in pixels
+					layoutParams.width = screenWidth>>1;
 					imgNews.setLayoutParams(layoutParams);
-					imgNews.setScaleType(ScaleType.FIT_CENTER);
+					imgNews.setScaleType(ScaleType.CENTER_CROP);
 				}
 				else{
 					
 					
 					headline.setText(strHL);
 					headline.setVisibility(View.VISIBLE);
-					imgNews.setVisibility(View.GONE);
-					
+				//	imgNews.setVisibility(View.GONE);
+					mImageLoader.DisplayImage((String)dataImage.get(position),imgNews);
+				
 					ViewGroup.LayoutParams layoutParams = headline.getLayoutParams();
-					layoutParams.height =400; //this is in pixels
-					layoutParams.width = 200;
+					layoutParams.height =screenWidth>>1; //this is in pixels
+					layoutParams.width = screenWidth>>1;
+					imgNews.setLayoutParams(layoutParams);
+					imgNews.setScaleType(ScaleType.CENTER_CROP);
 					headline.setLayoutParams(layoutParams);
 				}
 				

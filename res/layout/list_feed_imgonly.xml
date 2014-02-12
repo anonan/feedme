@@ -20,13 +20,15 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:ellipsize="end"
         android:gravity="center"
-        android:maxEms="20"
-        android:text="Large Text"
+        android:maxEms="50"
+        android:maxLines="4"
+        android:text="Large Textdddddddddddddddddddddd"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/black"
         android:textSize="18sp" />

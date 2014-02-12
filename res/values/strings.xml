@@ -2,9 +2,10 @@
 <resources>
 
     <string name="app_name">Update66</string>
-    <string name="show_normal">Big image</string>
-    <string name="show_mini">Small image</string>
-    <string name="show_text_only">Text</string>
+    <string name="show_normal">ภาพขนาดใหญ่</string>
+    <string name="show_mini">ภาพขนาดเล็ก</string>
+    <string name="show_text_only">ข้อความ</string>
+     <string name="show_grid">ตาราง</string>
     <string name="hello_world">Hello world!</string>
 
     <string-array name="rivers">
