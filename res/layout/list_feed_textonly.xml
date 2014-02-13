@@ -4,7 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
 <<<<<<< HEAD
+<<<<<<< HEAD
     android:background="#333"
+=======
+    android:background="#FFFFFF"
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
 =======
     android:background="#FFFFFF"
 >>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
@@ -16,7 +20,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 <<<<<<< HEAD
+<<<<<<< HEAD
         android:background="#22000000"
+=======
+        android:background="#FFFFFF"
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
 =======
         android:background="#FFFFFF"
 >>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
@@ -28,7 +36,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
 <<<<<<< HEAD
+<<<<<<< HEAD
             android:background="@drawable/bg_gradient_bl"
+=======
+      
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
 =======
       
 >>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
@@ -39,7 +51,11 @@
             android:text="Update66 Community - Freshy news "
             android:textAppearance="?android:attr/textAppearanceMedium"
 <<<<<<< HEAD
+<<<<<<< HEAD
             android:textColor="@color/white"
+=======
+            android:textColor="@color/black"
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
 =======
             android:textColor="@color/black"
 >>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
