@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,17 +29,23 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
@@ -45,32 +54,45 @@ public class MainActivity extends Activity {
 	ArrayList<String> links;
 	ArrayList<String> imageURL;
 	ArrayList<String> descriptions;
+	ArrayList<String> pubDate;
 	Activity mActivity;
 	ListView listNews;
+	GridView gridView;
 	ListView mDrawerList;
 	DrawerLayout mDrawerLayout;
+	Menu menu;
 	String mTitle;
+	SharedPreferences prefs;
 	// ActionBarDrawerToggle indicates the presence of Navigation Drawer in the
 	// action bar
 	ActionBarDrawerToggle mDrawerToggle;
+	ProgressDialog dialog;
+	int mMode,mCategory;
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		mMode = 0;
+		mCategory = 0;
 		mTitle = "";
+		
+		
+		prefs = this.getSharedPreferences("com.example.feedme", Context.MODE_PRIVATE);
+		mMode = prefs.getInt("mode", FeedsAdapter.TYPE_NORMAL);
 		// Initializing instance variables
 		headlines = new ArrayList<String>();
 		links = new ArrayList<String>();
 		imageURL = new ArrayList<String>();
 		descriptions = new ArrayList<String>();
+		pubDate =new ArrayList<String>();
 		mActivity = this;
 		listNews = (ListView) findViewById(R.id.listnews);
 
 		// Getting reference to the DrawerLayout
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.drawer_list);
-
+		gridView = (GridView)findViewById(R.id.gridview1);
 		// Getting reference to the ActionBarDrawerToggle
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_menu, R.string.app_name,
 				R.string.app_name) {
@@ -103,28 +125,39 @@ public class MainActivity extends Activity {
 
 		// Setting the adapter on mDrawerList
 		mDrawerList.setAdapter(adapter1);
-		// Enabling Home button
-		getActionBar().setHomeButtonEnabled(true);
-
-		// Enabling Up navigation
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Setting item click listener for the listview mDrawerList
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-				DownloadRssTask d = new DownloadRssTask();
-				d.execute(String.valueOf(position + 1));
+				if(position<7){
+					mCategory = position;
+					 dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
+					DownloadRssTask d = new DownloadRssTask();
+					d.execute(String.valueOf(position + 1));
+				}
+				else{
+					Intent k = new Intent(mActivity,AboutUsActivity.class);
+					startActivity(k);
+				}
+				
 				// Closing the drawer
 				mDrawerLayout.closeDrawer(mDrawerList);
 			}
 		});
 
+		// Enabling Home button
+		getActionBar().setHomeButtonEnabled(true);
+
+		// Enabling Up navigation
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		 dialog = ProgressDialog.show(this, "", "°”≈—ß‚À≈¥");
 		DownloadRssTask d = new DownloadRssTask();
 		d.execute();
 	}
 
+	
+	
 	public InputStream getInputStream(URL url) {
 		try {
 			return url.openConnection().getInputStream();
@@ -164,50 +197,15 @@ public class MainActivity extends Activity {
 				 * In order to achieve this, we will make use of a boolean
 				 * variable.
 				 */
-				boolean insideItem = false;
+
 				headlines.clear();
 				links.clear();
 				imageURL.clear();
 				descriptions.clear();
-				extractDatafrommHTML(convertStreamToString(getInputStream(url)));
-
-				// Returns the type of current event: START_TAG, END_TAG, etc..
-				// int eventType = xpp.getEventType();
-				// while (eventType != XmlPullParser.END_DOCUMENT) {
-				// if (eventType == XmlPullParser.START_TAG) {
-				//
-				// if (xpp.getName().equalsIgnoreCase("item")) {
-				// insideItem = true;
-				// } else if (xpp.getName().equalsIgnoreCase("title")) {
-				// if (insideItem) {
-				// // Extract img url from title
-				// headlines.add((xpp.nextText())); // extract
-				// // the
-				// // headline
-				// }
-				//
-				// } else if (xpp.getName().equalsIgnoreCase("link")) {
-				// if (insideItem)
-				// links.add(xpp.nextText()); // extract the link
-				// // of article
-				// } else if (xpp.getName().equalsIgnoreCase("description")) {
-				// Log.v("DES",xpp.);
-				//
-				// String des = removeTagfromTitle(xpp.nextText());
-				// Log.v("DESS",des);
-				// descriptions.add(des);
-				// if (insideItem){
-				// imageURL.add(renderHtml(des));
-				// }
-				//
-				// }
-				// } else if (eventType == XmlPullParser.END_TAG &&
-				// xpp.getName().equalsIgnoreCase("item")) {
-				// insideItem = false;
-				// }
-				//
-				// eventType = xpp.next(); // move to next element
-				// }
+				pubDate.clear();
+				
+				extract(convertStreamToString(getInputStream(url)));
+				
 
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -228,22 +226,55 @@ public class MainActivity extends Activity {
 			final String[] imgUrlArr = imageURL.toArray(new String[imageURL.size()]);
 			final String[] desArr = descriptions.toArray(new String[descriptions.size()]);
 			final String[] linkArr = links.toArray(new String[links.size()]);
+			final String[] pubDataArr = pubDate.toArray(new String[pubDate.size()]);
+			
+		
+			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr,pubDataArr);
+			adapter.setType(mMode);
+			
+			if(mMode == FeedsAdapter.TYPE_IMGONLY){
+				listNews.setVisibility(View.GONE);
+				gridView.setVisibility(View.VISIBLE);
+				gridView.setAdapter(null);
+				gridView.setAdapter(adapter);
+				
+				
+				
+				gridView.setOnItemClickListener(new OnItemClickListener() {
 
-			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr);
-			listNews.setAdapter(null);
-			listNews.setAdapter(adapter);
-			listNews.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> root, View view, int position, long id) {
+						Intent k = new Intent(mActivity, NewsDetailActivity.class);
+						k.putExtra("headline", hlArr[position]);
+						k.putExtra("image", imgUrlArr[position]);
+						k.putExtra("description", desArr[position]);
+						k.putExtra("link", linkArr[position]);
+						mActivity.startActivity(k);
+					}
+				});
+			}
+			else{
+				
+				listNews.setVisibility(View.VISIBLE);
+				gridView.setVisibility(View.GONE);
+				listNews.setAdapter(null);
+				listNews.setAdapter(adapter);
+				listNews.setOnItemClickListener(new OnItemClickListener() {
 
-				@Override
-				public void onItemClick(AdapterView<?> root, View view, int position, long id) {
-					Intent k = new Intent(mActivity, NewsDetailActivity.class);
-					k.putExtra("headline", hlArr[position]);
-					k.putExtra("image", imgUrlArr[position]);
-					k.putExtra("description", desArr[position]);
-					// k.putExtra("link", linkArr[position]);
-					mActivity.startActivity(k);
-				}
-			});
+					@Override
+					public void onItemClick(AdapterView<?> root, View view, int position, long id) {
+						Intent k = new Intent(mActivity, NewsDetailActivity.class);
+						k.putExtra("headline", hlArr[position]);
+						k.putExtra("image", imgUrlArr[position]);
+						k.putExtra("description", desArr[position]);
+						k.putExtra("link", linkArr[position]);
+						mActivity.startActivity(k);
+					}
+				});
+			}
+			
+			
+			dialog.cancel();
 		}
 	}
 
@@ -273,58 +304,84 @@ public class MainActivity extends Activity {
 		}
 		return sb.toString();
 	}
-	private void extractDatafrommHTML(String body) {
-		Pattern pattern = Pattern.compile("<title>(.*)</title>");
-		Matcher matcher = pattern.matcher(body);
-		
-		int i = 0;
-		
-		while (matcher.find()) {
-			if (i == 0) {
-				i++;
-				continue;
-			}
-			
-			headlines.add(matcher.group(1));
-			i++;
+	
+	private String extractfromPattern(String body,String pattern){
+		Pattern pat = Pattern.compile(pattern, Pattern.DOTALL);
+		Matcher matcher = pat.matcher(body);
+		if(matcher.find()) {
+			return matcher.group(1);
 		}
-
-		pattern = Pattern.compile("<description>(.*)</description>");
-
-		matcher = pattern.matcher(body);
-		i = 0;
-		while (matcher.find()) {
-			if (i == 0) {
-				i++;
-				continue;
-			}
-			descriptions.add((matcher.group(1)));
-			i++;
-		}
-		pattern = Pattern.compile("<image>http(.*)jpg</image>");
-		matcher = pattern.matcher(body);
-		i = 0;
-		while (matcher.find()) {
-
-			imageURL.add("http" + removeTagfromTitle(matcher.group(1)) + "jpg");
-			i++;
-		}
-
+		else return null;
 	}
-
-	public String renderHtml(String body) {
-		Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
+	
+	
+	private String cleanDescription(String s){
+		s = s.replace("P { margin: 0px; }","");
+		return s;
+	}
+	
+	private void extract(String body){
+		
+		Pattern pattern = Pattern.compile("<item>(.*?)</item>",Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(body);
-		StringBuilder builder = new StringBuilder();
-		int i = 0;
-		String imgURL = "";
+		
 		while (matcher.find()) {
-
-			imgURL = matcher.group(1); // Access a submatch group; String can't
-										// do this.
+			
+			String content = matcher.group(1);
+			
+			String h  = extractfromPattern(content,"<title>(.*?)</title>");
+			String d  = extractfromPattern(content,"<description>(.*?)</description>");
+			d = cleanDescription(d);
+			String i  = extractfromPattern(content,"<image>(.*?)</image>");
+			String l  = extractfromPattern(content,"<link>(.*?)</link>");
+			String p  = extractfromPattern(content,"<pubDate>(.*?)</pubDate>");
+			
+			if(i!=null&&h!=null&&d!=null&&l!=null&&p!=null){
+				headlines.add(h);
+				descriptions.add(removeDirtyBracket(removeImageTag(d)));
+				links.add(l);
+				pubDate.add(p);
+				//approve this image valid or not
+				URL u;
+				int code;
+				try {
+					u = new URL ( i);
+					HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
+					huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
+					huc.connect () ; 
+					code = huc.getResponseCode() ;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					code = 404;
+				}
+				
+				if(code==404)i="";
+				imageURL.add(i);
+			}
 		}
-		Log.v("HL", "Load image:" + imgURL);
-		return imgURL;
+	}
+	
+	
+	private String removeDirtyBracket(String body){
+		return body.replaceAll("]]>", "");
+	}
+	
+	private String removeImageTag(String body) {
+		
+		return body.replaceAll("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>", "");
+//		Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
+//		Matcher matcher = pattern.matcher(body);
+//		StringBuilder builder = new StringBuilder();
+//		int i = 0;
+//		String imgURL = "";
+//		while (matcher.find()) {
+//
+//			imgURL = matcher.group(1); // Access a submatch group; String can't
+//										// do this.
+//		}
+//		
+//		return imgURL;
 
 	}
 
@@ -337,7 +394,43 @@ public class MainActivity extends Activity {
 	/** Handling the touch event of app icon */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		if(item.getItemId()==R.id.action_show_mini){
+			mMode = FeedsAdapter.TYPE_MINI;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgtext));
+			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
+			 DownloadRssTask d = new DownloadRssTask();
+			 d.execute(String.valueOf(mCategory+1));
+		}
+		else if(item.getItemId()==R.id.action_show_normal){
+			mMode = FeedsAdapter.TYPE_NORMAL;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_fullimg));
+			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
+			 DownloadRssTask d = new DownloadRssTask();
+			 d.execute(String.valueOf(mCategory+1));
+		}
+		else if(item.getItemId()==R.id.action_show_text){
+			mMode = FeedsAdapter.TYPE_TEXTONLY;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_textonly));
+			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
+			 DownloadRssTask d = new DownloadRssTask();
+			 d.execute(String.valueOf(mCategory+1));
+		}
+		else if(item.getItemId()==R.id.action_show_grid){
+			mMode = FeedsAdapter.TYPE_IMGONLY;
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgonly2));
+			dialog = ProgressDialog.show(mActivity, "", "°”≈—ß‚À≈¥");
+			 DownloadRssTask d = new DownloadRssTask();
+			 d.execute(String.valueOf(mCategory+1));
+		}
+		
+		prefs.edit().putInt("mode", mMode).commit();
+		 
+		
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			
+			
+			
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -349,7 +442,7 @@ public class MainActivity extends Activity {
 		// If the drawer is open, hide action items related to the content view
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		menu.findItem(R.id.action_show_normal).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -357,6 +450,20 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		
+		if(mMode ==FeedsAdapter.TYPE_NORMAL){
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_fullimg));
+		}
+		else if(mMode ==FeedsAdapter.TYPE_MINI){
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgtext));
+		}
+		else if(mMode ==FeedsAdapter.TYPE_TEXTONLY){
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_textonly));
+		}
+		else{
+			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgonly2));
+		}
+		this.menu = menu;
 		return true;
 	}
 }
