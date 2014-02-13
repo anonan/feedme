@@ -49,7 +49,15 @@
             android:paddingRight="5dp"
             android:text="Update at "
             android:textAppearance="?android:attr/textAppearanceMedium"
+<<<<<<< HEAD
+<<<<<<< HEAD
+            android:textColor="@color/bluedark"
+=======
             android:textColor="@color/graydark"
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
+=======
+            android:textColor="@color/graydark"
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
             android:textSize="10sp" />
 
     </LinearLayout>
