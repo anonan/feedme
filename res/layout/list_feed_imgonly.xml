@@ -3,7 +3,11 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+<<<<<<< HEAD
     android:background="#333"
+=======
+    android:background="#ffffff"
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
     android:orientation="vertical" >
 
     <ImageView
@@ -18,4 +22,22 @@
 
     <!-- #CCf8f7f5 -->
 
+<<<<<<< HEAD
+=======
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxEms="50"
+        android:maxLines="4"
+        android:text="Large Textdddddddddddddddddddddd"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+>>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
 </RelativeLayout>
