@@ -2,17 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/RelativeLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-<<<<<<< HEAD
-<<<<<<< HEAD
-    android:background="#333"
-=======
-    android:background="#ffffff"
->>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
-=======
-    android:background="#ffffff"
->>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
-    android:orientation="vertical" >
+    android:layout_height="wrap_content">
+
 
     <ImageView
         android:id="@+id/imageView1"
@@ -26,11 +17,6 @@
 
     <!-- #CCf8f7f5 -->
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
     <TextView
         android:id="@+id/textView1"
         android:layout_width="fill_parent"
@@ -46,8 +32,4 @@
         android:textColor="@color/black"
         android:textSize="18sp" />
 
-<<<<<<< HEAD
->>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
-=======
->>>>>>> 1f759241b4a3dea2c6494e13b017aa6322674f5c
 </RelativeLayout>
