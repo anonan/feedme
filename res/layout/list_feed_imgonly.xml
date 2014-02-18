@@ -21,15 +21,16 @@
         android:id="@+id/textView1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_alignBottom="@+id/imageView1"
+        android:background="@color/graydark"
         android:ellipsize="end"
         android:gravity="center"
         android:maxEms="50"
-        android:maxLines="4"
-        android:text="Large Textdddddddddddddddddddddd"
+        android:maxLines="2"
+        android:padding="5dp"
+        android:text="Nomessage (News Headind that maybe long however it could not longer than 2 lines)"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:textColor="@color/graylight"
+        android:textSize="16sp" />
 
 </RelativeLayout>
