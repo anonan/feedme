@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.update66.thai.news.R;
 
 public class NewsDetailActivity extends Activity {
 

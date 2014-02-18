@@ -3,6 +3,7 @@ package com.example.feedme;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import com.update66.thai.news.R;
 
 public class AboutUsActivity extends Activity {
 

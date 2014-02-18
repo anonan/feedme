@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import com.update66.thai.news.R;
 
 public class ImageLoader {
 

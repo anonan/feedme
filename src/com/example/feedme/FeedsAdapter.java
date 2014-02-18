@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -26,6 +27,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.os.Bundle;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+import com.update66.thai.news.R;
 /**
  * Activity list
  * 
@@ -84,7 +90,7 @@ public class FeedsAdapter extends BaseAdapter {
 	
 	public int getCount() {
 		
-			return dataHeadline.size();
+			return dataHeadline.size()+1;
 		
 	}
 
@@ -168,6 +174,9 @@ public class FeedsAdapter extends BaseAdapter {
 	private View getViewNormal(View convertView,int position,String strHL){
 		//Full image view
 		View vi = convertView;
+		
+		
+		
 		if(position<dataImage.size()&&!dataImage.get(position).toString().equals("")){
 			
 			if (convertView == null) {
@@ -175,7 +184,7 @@ public class FeedsAdapter extends BaseAdapter {
 				vi.setTag("1");
 			}
 			else{
-				if(!vi.getTag().equals("1")){
+				if(vi.getTag()==null||!vi.getTag().equals("1")){
 					vi = inflater.inflate(R.layout.list_feed, null);
 					vi.setTag("1");
 				}
@@ -221,6 +230,31 @@ public class FeedsAdapter extends BaseAdapter {
 
 	@SuppressLint("SimpleDateFormat")
 	public View getView(final int position, View convertView, ViewGroup parent) {
+		
+		if(position == getCount()-1){
+			 // Create a new AdView
+	        AdView adView = new AdView(mA, AdSize.BANNER,
+	                                   "a153032538e539a");
+
+	        // Convert the default layout parameters so that they play nice with
+	        // ListView.
+
+	        float density = mA.getResources().getDisplayMetrics().density;
+	        int height = Math.round(AdSize.BANNER.getHeight() * density);
+	        AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+	            AbsListView.LayoutParams.FILL_PARENT,
+	            height);
+	        adView.setLayoutParams(params);
+
+	        AdRequest adR = new AdRequest();
+	 	   adR.addTestDevice(AdRequest.TEST_EMULATOR);
+	 	  // adR.setTesting(true);
+	 	    // Load the adView with the ad request.
+	 	    adView.loadAd(adR);
+	        return adView;
+		}
+		
+		
 		View vi = convertView;
 		String strHL = (String)dataHeadline.get(position);
 		
