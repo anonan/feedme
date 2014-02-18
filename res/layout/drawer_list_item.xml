@@ -3,12 +3,11 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:text="Category item"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
     android:textColor="#000000" />
 
