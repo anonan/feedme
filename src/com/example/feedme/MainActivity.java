@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+
+import com.update66.thai.news.R;
 
 
 
@@ -46,9 +47,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
+
 public class MainActivity extends Activity {
+	
+	
 	String TAG = "MAIN";
 	ArrayList<String> headlines;
 	ArrayList<String> links;
@@ -67,15 +72,31 @@ public class MainActivity extends Activity {
 	// action bar
 	ActionBarDrawerToggle mDrawerToggle;
 	ProgressDialog dialog;
+	
 	int mMode,mCategory;
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//MobileCore.init(this,"10KWAQ1IKAKGYYNYEK0FGHBEE78DP", LOG_TYPE.DEBUG,AD_UNITS.OFFERWALL);
+		
+		 // Create the adView
+	 
+		
+//		MobileCore.showOfferWall(this, new CallbackResponse() {
+//			@Override
+//			public void onConfirmation(TYPE arg0) {
+//			//finish();
+//			}
+//		});
+		
 		setContentView(R.layout.activity_main);
 		mMode = 0;
 		mCategory = 0;
 		mTitle = "";
+		
+		
 		
 		
 		prefs = this.getSharedPreferences("com.example.feedme", Context.MODE_PRIVATE);
@@ -88,7 +109,11 @@ public class MainActivity extends Activity {
 		pubDate =new ArrayList<String>();
 		mActivity = this;
 		listNews = (ListView) findViewById(R.id.listnews);
-
+		
+		
+		
+	 
+		
 		// Getting reference to the DrawerLayout
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.drawer_list);
@@ -113,23 +138,22 @@ public class MainActivity extends Activity {
 		};
 		// Setting DrawerToggle on DrawerLayout
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		// Creating an ArrayAdapter to add items to the listview mDrawerList
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item,
-				getResources().getStringArray(R.array.rivers));
-
+		MenuAdapter adapter = new MenuAdapter(this, getResources().getStringArray(R.array.rivers));
+		
 		// Setting the adapter on mDrawerList
 		mDrawerList.setAdapter(adapter);
-		// Creating an ArrayAdapter to add items to the listview mDrawerList
-		ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item,
-				getResources().getStringArray(R.array.rivers));
-
-		// Setting the adapter on mDrawerList
-		mDrawerList.setAdapter(adapter1);
+//		// Creating an ArrayAdapter to add items to the listview mDrawerList
+//		ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item,
+//				getResources().getStringArray(R.array.rivers));
+//
+//		// Setting the adapter on mDrawerList
+//		mDrawerList.setAdapter(adapter1);
 
 		// Setting item click listener for the listview mDrawerList
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				view.setSelected(true);
 				if(position<7){
 					mCategory = position;
 					 dialog = ProgressDialog.show(mActivity, "", "¡ÓÅÑ§âËÅ´");
@@ -151,12 +175,17 @@ public class MainActivity extends Activity {
 
 		// Enabling Up navigation
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		 dialog = ProgressDialog.show(this, "", "¡ÓÅÑ§âËÅ´");
+		dialog = ProgressDialog.show(this, "", "¡ÓÅÑ§âËÅ´");
 		DownloadRssTask d = new DownloadRssTask();
 		d.execute();
 	}
 
-	
+	@Override
+	protected void onStart() {
+	    super.onStart();
+
+	   
+	}   
 	
 	public InputStream getInputStream(URL url) {
 		try {
@@ -273,7 +302,7 @@ public class MainActivity extends Activity {
 				});
 			}
 			
-			
+			if(dialog!=null)
 			dialog.cancel();
 		}
 	}
@@ -465,5 +494,26 @@ public class MainActivity extends Activity {
 		}
 		this.menu = menu;
 		return true;
+	}
+	
+	@Override
+	protected void onStop() {
+	    super.onStop();
+
+	  
+	}
+
+	@Override
+	protected void onDestroy() {
+		
+	    super.onDestroy();
+
+	 
+	}
+
+	@Override
+	public void onBackPressed() {
+
+	        super.onBackPressed();
 	}
 }

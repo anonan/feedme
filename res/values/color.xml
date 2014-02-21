@@ -20,4 +20,6 @@
 	 <color name="bluedissa">#577890</color>
 	 <color name="tranparent">#00FFFFFF</color>
 	 <color name="unread_notification">#eaf7ff</color>
+	 <color name="pressed_color">#4d90fe</color>
+    <color name="default_color">#ffffff</color>
 </resources>

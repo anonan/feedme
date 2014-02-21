@@ -11,8 +11,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class NewsDetailActivity extends Activity {
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
+import com.update66.thai.news.R;
 
+public class NewsDetailActivity extends Activity {
+	protected AdView adView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,14 +33,19 @@ public class NewsDetailActivity extends Activity {
 		ActionBar acb = getActionBar();
 		acb.setHomeButtonEnabled(true);
 		acb.setDisplayHomeAsUpEnabled(true);
+		
+		 //admob widget
+		  adView = (AdView)findViewById(R.id.ad);
+		adView.loadAd(new AdRequest());
+		
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.news_detail, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.news_detail, menu);
+//		return true;
+//	}
 
 	@Override
     public boolean onOptionsItemSelected(MenuItem menuItem)
