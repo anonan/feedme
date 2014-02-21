@@ -1,5 +1,5 @@
 package com.example.feedme;
-import com.google.ads.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 	// action bar
 	ActionBarDrawerToggle mDrawerToggle;
 	ProgressDialog dialog;
-	private AdView adView;
+	
 	int mMode,mCategory;
 	@SuppressLint("NewApi")
 	@Override
@@ -138,23 +138,22 @@ public class MainActivity extends Activity {
 		};
 		// Setting DrawerToggle on DrawerLayout
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		// Creating an ArrayAdapter to add items to the listview mDrawerList
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item,
-				getResources().getStringArray(R.array.rivers));
-
+		MenuAdapter adapter = new MenuAdapter(this, getResources().getStringArray(R.array.rivers));
+		
 		// Setting the adapter on mDrawerList
 		mDrawerList.setAdapter(adapter);
-		// Creating an ArrayAdapter to add items to the listview mDrawerList
-		ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item,
-				getResources().getStringArray(R.array.rivers));
-
-		// Setting the adapter on mDrawerList
-		mDrawerList.setAdapter(adapter1);
+//		// Creating an ArrayAdapter to add items to the listview mDrawerList
+//		ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item,
+//				getResources().getStringArray(R.array.rivers));
+//
+//		// Setting the adapter on mDrawerList
+//		mDrawerList.setAdapter(adapter1);
 
 		// Setting item click listener for the listview mDrawerList
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				view.setSelected(true);
 				if(position<7){
 					mCategory = position;
 					 dialog = ProgressDialog.show(mActivity, "", "¡ÓÅÑ§âËÅ´");
@@ -176,7 +175,7 @@ public class MainActivity extends Activity {
 
 		// Enabling Up navigation
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		// dialog = ProgressDialog.show(this, "", "¡ÓÅÑ§âËÅ´");
+		dialog = ProgressDialog.show(this, "", "¡ÓÅÑ§âËÅ´");
 		DownloadRssTask d = new DownloadRssTask();
 		d.execute();
 	}
@@ -506,9 +505,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		 if (adView != null) {
-		      adView.destroy();
-		    }
+		
 	    super.onDestroy();
 
 	 

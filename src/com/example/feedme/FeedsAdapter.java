@@ -52,6 +52,7 @@ public class FeedsAdapter extends BaseAdapter {
 	public static final int TYPE_IMGONLY = 3;
 	int screenWidth;
 	int screenHeight;
+	int adsPosition;
 	ImageLoader mImageLoader;
 	boolean mShowName;
 	
@@ -82,6 +83,8 @@ public class FeedsAdapter extends BaseAdapter {
 		display.getSize(size);
 		 screenWidth = size.x;
 		 screenHeight = size.y;
+		 
+		 adsPosition = (new Random()).nextInt(dataImage.size()-2)+1;
 	}
 
 	public void setType(int type){
@@ -89,9 +92,9 @@ public class FeedsAdapter extends BaseAdapter {
 	}
 	
 	public int getCount() {
-		
+		if(type!=TYPE_IMGONLY)
 			return dataHeadline.size()+1;
-		
+		else return dataHeadline.size();
 	}
 
 	private View getViewTextOnly(View convertView,int position,String strHL){
@@ -101,6 +104,12 @@ public class FeedsAdapter extends BaseAdapter {
 			vi = inflater.inflate(R.layout.list_feed_textonly, null);
 			vi.setTag("1");
 		}
+		
+		if(vi.getTag()!=null||vi.getTag().equals("2")){
+			vi = inflater.inflate(R.layout.list_feed_textonly, null);
+			vi.setTag("1");
+		}
+		
 		TextView headline = (TextView)vi.findViewById(R.id.textView1);
 		headline.setText(strHL);
 		
@@ -111,6 +120,11 @@ public class FeedsAdapter extends BaseAdapter {
 		//Mini image view
 		View vi = convertView;
 		if (convertView == null) {
+			vi = inflater.inflate(R.layout.list_feed_imgtext, null);
+			vi.setTag("1");
+		}
+		
+		if(vi.getTag()!=null||vi.getTag().equals("2")){
 			vi = inflater.inflate(R.layout.list_feed_imgtext, null);
 			vi.setTag("1");
 		}
@@ -131,9 +145,10 @@ public class FeedsAdapter extends BaseAdapter {
 					vi.setTag("1");
 				}
 				
-				
-			
-				
+				if(vi.getTag()!=null||vi.getTag().equals("2")){
+					vi = inflater.inflate(R.layout.list_feed_imgonly, null);
+					vi.setTag("1");
+				}
 				
 				TextView headline = (TextView)vi.findViewById(R.id.textView1);
 				ImageView imgNews = (ImageView)vi.findViewById(R.id.imageView1);
@@ -142,7 +157,6 @@ public class FeedsAdapter extends BaseAdapter {
 					headline.setVisibility(View.GONE);
 					imgNews.setVisibility(View.VISIBLE);
 					mImageLoader.DisplayImage((String)dataImage.get(position),imgNews);
-					
 					
 					ViewGroup.LayoutParams layoutParams = imgNews.getLayoutParams();
 					layoutParams.height =screenWidth>>1; //this is in pixels
@@ -229,29 +243,39 @@ public class FeedsAdapter extends BaseAdapter {
 	}
 
 	@SuppressLint("SimpleDateFormat")
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView( int position, View convertView, ViewGroup parent) {
+		Log.v(TAG,"Postiion:"+position);
+		if(position>adsPosition){
+			position = position - 1;
+		}
 		
-		if(position == getCount()-1){
-			 // Create a new AdView
-	        AdView adView = new AdView(mA, AdSize.BANNER,
-	                                   "a153032538e539a");
+		else
+		if(position ==adsPosition&&type!=TYPE_IMGONLY){
+			
+			if(convertView==null||!convertView.getTag().equals("2")){
+				 // Create a new AdView
+		        AdView adView = new AdView(mA, AdSize.BANNER,
+		                                   "a153032538e539a");
 
-	        // Convert the default layout parameters so that they play nice with
-	        // ListView.
+		        // Convert the default layout parameters so that they play nice with
+		        // ListView.
 
-	        float density = mA.getResources().getDisplayMetrics().density;
-	        int height = Math.round(AdSize.BANNER.getHeight() * density);
-	        AbsListView.LayoutParams params = new AbsListView.LayoutParams(
-	            AbsListView.LayoutParams.FILL_PARENT,
-	            height);
-	        adView.setLayoutParams(params);
+		        float density = mA.getResources().getDisplayMetrics().density;
+		        int height = Math.round(AdSize.BANNER.getHeight() * density);
+		        AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+		            AbsListView.LayoutParams.FILL_PARENT,
+		            height);
+		        adView.setLayoutParams(params);
 
-	        AdRequest adR = new AdRequest();
-	 	   adR.addTestDevice(AdRequest.TEST_EMULATOR);
-	 	  // adR.setTesting(true);
-	 	    // Load the adView with the ad request.
-	 	    adView.loadAd(adR);
-	        return adView;
+		        AdRequest adR = new AdRequest();
+		 	   adR.addTestDevice(AdRequest.TEST_EMULATOR);
+		 	  // adR.setTesting(true);
+		 	    // Load the adView with the ad request.
+		 	    adView.loadAd(adR);
+		 	    adView.setTag("2");
+		        return adView;
+			}
+			else return convertView;
 		}
 		
 		

@@ -43,6 +43,7 @@ android:enabled="true" android:process=":installationTracker"/>
         </activity>
         <activity
             android:name="com.example.feedme.AboutUsActivity"
+              android:theme="@android:style/Theme.DeviceDefault.Light"
             android:label="@string/title_activity_about_us" >
         </activity>
         

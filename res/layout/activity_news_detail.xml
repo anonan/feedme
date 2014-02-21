@@ -35,6 +35,16 @@
                 android:padding="0dp"
                 android:src="@drawable/noimg" />
 
+            <com.google.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+         android:id="@+id/ad"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         ads:adSize="BANNER"
+          ads:adUnitId="a153032538e539a"
+         />    
+
+            
             <TextView
                 android:id="@+id/TextViewDescription"
                 android:layout_width="fill_parent"
