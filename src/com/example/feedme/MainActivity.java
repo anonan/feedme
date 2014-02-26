@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +19,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.update66.thai.news.R;
 
 
@@ -39,6 +42,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -154,6 +158,27 @@ public class MainActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				view.setSelected(true);
+				
+				HashMap<String, String> hitParameters = new HashMap<String, String>();
+//				   <item>การเมือง</item>
+//			        <item>เศรษฐกิจ</item>
+//			        <item>ต่างประเทศ</item>
+//			        <item>กีฬา</item>
+//			        <item>ไอที</item>
+//			        <item>บันเทิง</item>
+//			        <item>สุขภาพ</item>
+//			          <item>เกี่ยวกับเรา</item>
+				String[] category = {"Politics","Finance","Foreign","Sports","IT","Entertainment","Health","About"};
+				
+				hitParameters.put("Open category", category[position]);
+				EasyTracker.getInstance(mActivity).send(MapBuilder
+					      .createEvent("OPEN",     // Event category (required)
+				                   "CLICKSIDEBAR",  // Event action (required)
+				                   category[position],   // Event label
+				                   null)            // Event value
+				      .build()
+				  );
+				
 				if(position<7){
 					mCategory = position;
 					 dialog = ProgressDialog.show(mActivity, "", "กำลังโหลด");
@@ -170,6 +195,15 @@ public class MainActivity extends Activity {
 			}
 		});
 
+		
+		
+		//View customNav = LayoutInflater.from(this).inflate(R.layout.actionbutton, null); // layout which contains your button.
+		//Button mButton = (Button) customNav.findViewById(R.id.date_num);
+	//	mButton.setOnClickListener(this);
+
+		//getActionBar().setCustomView(customNav);
+		//getActionBar().setDisplayShowCustomEnabled(true);
+		
 		// Enabling Home button
 		getActionBar().setHomeButtonEnabled(true);
 
@@ -183,7 +217,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 	    super.onStart();
-
+	    EasyTracker.getInstance(this).activityStart(this); 
 	   
 	}   
 	
@@ -258,7 +292,7 @@ public class MainActivity extends Activity {
 			final String[] pubDataArr = pubDate.toArray(new String[pubDate.size()]);
 			
 		
-			FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr,pubDataArr);
+			final FeedsAdapter adapter = new FeedsAdapter(mActivity, hlArr, imgUrlArr,pubDataArr);
 			adapter.setType(mMode);
 			
 			if(mMode == FeedsAdapter.TYPE_IMGONLY){
@@ -273,6 +307,8 @@ public class MainActivity extends Activity {
 
 					@Override
 					public void onItemClick(AdapterView<?> root, View view, int position, long id) {
+						
+						
 						Intent k = new Intent(mActivity, NewsDetailActivity.class);
 						k.putExtra("headline", hlArr[position]);
 						k.putExtra("image", imgUrlArr[position]);
@@ -292,6 +328,13 @@ public class MainActivity extends Activity {
 
 					@Override
 					public void onItemClick(AdapterView<?> root, View view, int position, long id) {
+						
+						int adsPosition = adapter.getAdsPosition();
+						Log.v(TAG,position+":"+adsPosition);
+						if(position>=adsPosition){
+							position = position - 1;
+						}
+						
 						Intent k = new Intent(mActivity, NewsDetailActivity.class);
 						k.putExtra("headline", hlArr[position]);
 						k.putExtra("image", imgUrlArr[position]);
@@ -364,6 +407,8 @@ public class MainActivity extends Activity {
 			String i  = extractfromPattern(content,"<image>(.*?)</image>");
 			String l  = extractfromPattern(content,"<link>(.*?)</link>");
 			String p  = extractfromPattern(content,"<pubDate>(.*?)</pubDate>");
+			String source = extractfromPattern(content,"<dc:creator>(.*?)</dc:creator>");
+			
 			
 			if(i!=null&&h!=null&&d!=null&&l!=null&&p!=null){
 				headlines.add(h);
@@ -371,21 +416,26 @@ public class MainActivity extends Activity {
 				links.add(l);
 				pubDate.add(p);
 				//approve this image valid or not
-				URL u;
-				int code;
-				try {
-					u = new URL ( i);
-					HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
-					huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
-					huc.connect () ; 
-					code = huc.getResponseCode() ;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					code = 404;
-				}
+//				URL u;
+//				int code;
+//				try {
+//					u = new URL ( i);
+//					HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
+//					huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
+//					huc.connect () ; 
+//					code = huc.getResponseCode() ;
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					code = 404;
+//				}
+//				
+//				if(code==404){
+//					Log.v("ERROR with image",i);
+//					i="";
+//				}
 				
-				if(code==404)i="";
+				if(source==null||source.equals("Matichon"))i="";
 				imageURL.add(i);
 			}
 		}
@@ -397,8 +447,10 @@ public class MainActivity extends Activity {
 	}
 	
 	private String removeImageTag(String body) {
-		
-		return body.replaceAll("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>", "");
+		String returnString = body.replaceAll("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>", "");
+		returnString = returnString.replaceAll("<IMG[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>", "");
+		Log.v(TAG,"REMooooooooooooooooooVOEGINNGGGG..."+returnString);
+		return returnString;
 //		Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
 //		Matcher matcher = pattern.matcher(body);
 //		StringBuilder builder = new StringBuilder();
@@ -424,12 +476,15 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
+		String viewChangeto="NavButton";
+		
 		if(item.getItemId()==R.id.action_show_mini){
 			mMode = FeedsAdapter.TYPE_MINI;
 			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.list_imgtext));
 			dialog = ProgressDialog.show(mActivity, "", "กำลังโหลด");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
+			 viewChangeto="mini image";
 		}
 		else if(item.getItemId()==R.id.action_show_normal){
 			mMode = FeedsAdapter.TYPE_NORMAL;
@@ -437,6 +492,8 @@ public class MainActivity extends Activity {
 			dialog = ProgressDialog.show(mActivity, "", "กำลังโหลด");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
+			 
+			 viewChangeto="normal image";
 		}
 		else if(item.getItemId()==R.id.action_show_text){
 			mMode = FeedsAdapter.TYPE_TEXTONLY;
@@ -444,6 +501,8 @@ public class MainActivity extends Activity {
 			dialog = ProgressDialog.show(mActivity, "", "กำลังโหลด");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
+			 
+			 viewChangeto="text only";
 		}
 		else if(item.getItemId()==R.id.action_show_grid){
 			mMode = FeedsAdapter.TYPE_IMGONLY;
@@ -451,7 +510,18 @@ public class MainActivity extends Activity {
 			dialog = ProgressDialog.show(mActivity, "", "กำลังโหลด");
 			 DownloadRssTask d = new DownloadRssTask();
 			 d.execute(String.valueOf(mCategory+1));
+			 
+			 viewChangeto="Grid";
 		}
+		
+		
+		EasyTracker.getInstance(mActivity).send(MapBuilder
+			      .createEvent("OPEN",     // Event category (required)
+		                   "CHANGEVIEW",  // Event action (required)
+		                   viewChangeto,   // Event label
+		                   null)            // Event value
+		                    .build()
+		);
 		
 		prefs.edit().putInt("mode", mMode).commit();
 		 
@@ -500,7 +570,7 @@ public class MainActivity extends Activity {
 	protected void onStop() {
 	    super.onStop();
 
-	  
+	    EasyTracker.getInstance(this).activityStop(this); 
 	}
 
 	@Override
