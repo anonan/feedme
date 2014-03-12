@@ -39,11 +39,11 @@ public class ImageLoader {
 		executorService = Executors.newFixedThreadPool(5);
 	}
 
-	final int stub_id = R.drawable.ic_launcher;
+	final int stub_id = R.drawable.noimg2;
 	public void DisplayImage(String url, ImageView imageView) {
 		
 		if (url == null) {
-			imageView.setImageResource(R.drawable.ic_launcher);
+			imageView.setImageResource(R.drawable.noimg2);
 			return;
 		}
 		imageViews.put(imageView, url);
@@ -63,7 +63,7 @@ public class ImageLoader {
 	public void DisplayImageNoCache(String url, ImageView imageView) {
 		
 		if (url == null) {
-			imageView.setImageResource(R.drawable.ic_launcher);
+			imageView.setImageResource(R.drawable.noimg2);
 			return;
 		}
 		memoryCache.clear();

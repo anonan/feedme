@@ -89,6 +89,7 @@ public class FeedsAdapter extends BaseAdapter {
 
 	public void setType(int type){
 		this.type = type;
+		if(type==TYPE_IMGONLY)adsPosition=0;
 	}
 	
 	public int getCount() {
@@ -97,6 +98,10 @@ public class FeedsAdapter extends BaseAdapter {
 		else return dataHeadline.size();
 	}
 
+	public int getAdsPosition(){
+		return adsPosition;
+	}
+	
 	private View getViewTextOnly(View convertView,int position,String strHL){
 		//Mini image view
 		View vi = convertView;
@@ -170,14 +175,15 @@ public class FeedsAdapter extends BaseAdapter {
 					headline.setText(strHL);
 					headline.setVisibility(View.VISIBLE);
 				//	imgNews.setVisibility(View.GONE);
-					mImageLoader.DisplayImage((String)dataImage.get(position),imgNews);
+					imgNews.setImageDrawable(mA.getResources().getDrawable(R.drawable.noimg2));
+				//	mImageLoader.DisplayImage((String)dataImage.get(position),imgNews);
 				
-					ViewGroup.LayoutParams layoutParams = headline.getLayoutParams();
-					layoutParams.height =screenWidth>>1; //this is in pixels
-					layoutParams.width = screenWidth>>1;
-					imgNews.setLayoutParams(layoutParams);
-					imgNews.setScaleType(ScaleType.CENTER_CROP);
-					headline.setLayoutParams(layoutParams);
+//					ViewGroup.LayoutParams layoutParams = headline.getLayoutParams();
+//					layoutParams.height =screenWidth>>1; //this is in pixels
+//					layoutParams.width = screenWidth>>1;
+//					imgNews.setLayoutParams(layoutParams);
+//					imgNews.setScaleType(ScaleType.CENTER_CROP);
+//					headline.setLayoutParams(layoutParams);
 				}
 				
 				
@@ -234,8 +240,10 @@ public class FeedsAdapter extends BaseAdapter {
 			}
 			
 			TextView headline = (TextView)vi.findViewById(R.id.textView1);
+			if(headline!=null)
 			headline.setText(strHL);
 			TextView updateAt = (TextView)vi.findViewById(R.id.update);
+			if(updateAt!=null)
 			updateAt.setText(dataPubDate.get(position).toString());
 			
 		}
@@ -245,7 +253,7 @@ public class FeedsAdapter extends BaseAdapter {
 	@SuppressLint("SimpleDateFormat")
 	public View getView( int position, View convertView, ViewGroup parent) {
 		Log.v(TAG,"Postiion:"+position);
-		if(position>adsPosition){
+		if(position>adsPosition&&type!=TYPE_IMGONLY){
 			position = position - 1;
 		}
 		
@@ -268,7 +276,7 @@ public class FeedsAdapter extends BaseAdapter {
 		        adView.setLayoutParams(params);
 
 		        AdRequest adR = new AdRequest();
-		 	   adR.addTestDevice(AdRequest.TEST_EMULATOR);
+		 	 //  adR.addTestDevice(AdRequest.TEST_EMULATOR);
 		 	  // adR.setTesting(true);
 		 	    // Load the adView with the ad request.
 		 	    adView.loadAd(adR);
